@@ -13,7 +13,7 @@ public class Player {
     public Player() {
         this.row = -1;
         this.col = -1;
-        this. powers = new int[2];
+        this.powers = new int[2];
         this.powers[0] = 2;
         this.powers[1] = 0;
     }
@@ -21,19 +21,21 @@ public class Player {
     public Player(int row, int col) {
         this.row = row;
         this.col = col;
-        this. powers = new int[2];
+        this.powers = new int[2];
         this.powers[0] = 2;
         this.powers[1] = 0;
     }
 
-    public void setStartingCell(int row, int cel) {
-        if (row == -1 && cel == -1) {
-            //posi inicial
+    public void setStartingCell(int row, int col) {
+        if (this.row == -1 && this.col == -1) {
+            this.row = row;
+            this.col = col;
         }
     }
 
-    public void move(int row, int cell) {
-        //moure Player
+    public void move(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
 
     public int getPowerUpQuantity(PowerUp power) {
