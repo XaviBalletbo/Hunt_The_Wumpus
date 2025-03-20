@@ -58,11 +58,17 @@ public class PowerUPCell extends Cell{
     public String toString(){
         String str= "";
         if (power == PowerUp.ARROW){
-            str= "Cel·la ["+row+", " +col+ "] -Tipus POWERUP (Concedeix el poder de ARROW)";
+            str= " - Tipus POWERUP (Concedeix el poder de ARROW)";
         }else if (power == PowerUp.JUMPER_BOOTS){
-            str = "Cel·la ["+row+ ", "+col+ "] -Tipus POWERUP (Concedeix el poder JUMPER BOOTS)";
+            str = " - Tipus POWERUP (Concedeix el poder JUMPER BOOTS)";
         }
-        else str = "Cel·la ["+row+ ", "+col+ "] -Tipus POWERUP";
-        return str;
+        else str = " - Tipus POWERUP";
+        return super.toString() +str;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        else return false;
     }
 }

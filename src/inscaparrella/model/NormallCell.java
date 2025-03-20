@@ -58,11 +58,11 @@ public class NormallCell extends Cell{
     public String toString(){
         String str ="";
         if (iType.equals(InhabitantType.BAT)){
-            str = "Cel·la ["+row+ +col+"] -NORMAL (Habitada per un ratpenat)";
+            str = " - NORMAL (Habitada per un ratpenat)";
         } else if (iType.equals(InhabitantType.WUMPUS)) {
-            str = "Cel·la ["+row+ +col+ "] -NORMAL (Habitada pel Wumpus)";
-        }else str = "Cel·la ["+row+ +col+ "] -TIPUS NORMAL;";
-        return str;
+            str = " - NORMAL (Habitada pel Wumpus)";
+        }else str = " - TIPUS NORMAL;";
+        return super.toString() +str;
     }
 
     @Override
