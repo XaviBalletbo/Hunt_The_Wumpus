@@ -46,6 +46,7 @@ public class PowerUPCell extends Cell{
         if (power == PowerUp.NONE ){
             str = "";
         }else str= "Clic, clic...";
+
         return str;
     }
 

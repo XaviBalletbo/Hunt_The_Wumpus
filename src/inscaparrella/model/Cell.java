@@ -49,14 +49,7 @@ public abstract class Cell {
         open = true;
     }
 
-    public abstract String emitEcho(){
-        return "";
-    }
 
-    public abstract boolean isDangerus(){
-        boolean isDangerous = false;
-        return isDangerous;
-    }
 
 
     @Override
@@ -70,5 +63,7 @@ public abstract class Cell {
        else return false;
     }
 
+    public abstract String emitEcho();
 
+    public abstract boolean isDangerus();
 }
