@@ -2,8 +2,6 @@ package inscaparrella.model;
 
 import inscaparrella.utils.CellType;
 
-import java.util.Objects;
-
 public abstract class Cell {
 
     int row;
@@ -28,11 +26,11 @@ public abstract class Cell {
     }
 
     //Constructor Coopia
-    public Cell(int col, int row, CellType cType, boolean open){
-        this.row = row;
-        this.col = col;
-        this.cType = cType;
-        this.open = open;
+    public Cell(Cell cell){
+        this.row = cell.row;
+        this.col = cell.col;
+        this.cType = cell.cType;
+        this.open = cell.open;
     }
 
 

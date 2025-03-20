@@ -1,10 +1,7 @@
 package inscaparrella.model;
 
 import inscaparrella.utils.CellType;
-import inscaparrella.utils.InhabitantType;
 import inscaparrella.utils.PowerUp;
-
-import javax.swing.*;
 
 public class PowerUPCell extends Cell{
 
@@ -15,13 +12,18 @@ public class PowerUPCell extends Cell{
         this.power = PowerUp.NONE;
     }
     public PowerUPCell(int row, int col){
-        super(row, col, CellType.POWERUP, false);
+        this.row = row;
+        this.col = col;
+        this.cType = CellType.POWERUP;
+        this.open = false;
         this.power = PowerUp.values()[(int) Math.random()*3];
     }
 
-    public PowerUPCell(int row, int col, boolean open, PowerUp power){
-        super(row, col,CellType.POWERUP, open);
-        this.power = power;
+    public PowerUPCell(PowerUPCell pwpCell){
+        this.row = pwpCell.row;
+        this.col = pwpCell.col;
+        this.cType = pwpCell.cType;
+        this.power = pwpCell.power;
     }
 
     private void createPowerUPCell(){

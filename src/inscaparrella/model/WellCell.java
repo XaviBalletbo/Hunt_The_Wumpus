@@ -8,14 +8,20 @@ public class WellCell extends Cell{
         super();
         this.cType = CellType.WELL;
     }
+
     public WellCell(int row, int col){
-        super(row, col, CellType.WELL, false);
+        this.row = row;
+        this.col = col;
+        this.cType = CellType.WELL;
+        this.open = false;
     }
 
 
-
-    public WellCell(int row, int col, boolean open){
-        super(col, row, CellType.WELL, open);
+    public WellCell(WellCell wCell){
+        this.row = wCell.row;
+        this.col = wCell.col;
+        this.cType = wCell.cType;
+        this.open = wCell.open;
     }
 
     @Override

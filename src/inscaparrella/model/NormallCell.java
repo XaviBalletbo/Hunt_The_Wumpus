@@ -3,8 +3,6 @@ package inscaparrella.model;
 import inscaparrella.utils.CellType;
 import inscaparrella.utils.InhabitantType;
 
-import java.util.Objects;
-
 public class NormallCell extends Cell{
 
 
@@ -16,13 +14,17 @@ public class NormallCell extends Cell{
 
     }
     public NormallCell(int row, int  col){
-        super(row, col, CellType.NORMAL,false);
+        super(row, col);
+        this.cType = CellType.NORMAL;
         this.iType = InhabitantType.NONE;
     }
 
-    public NormallCell(int row, int col, boolean open, InhabitantType iType){
-        super(row, col, CellType.NORMAL,open);
-        this.iType = iType;
+    public NormallCell(NormallCell nCell){
+       this.row= nCell.row;
+       this.col = nCell.col;
+       this.cType = nCell.cType;
+       this.open = nCell.open;
+       this.iType = nCell.iType;
     }
 
     public InhabitantType getiType() {
