@@ -9,9 +9,9 @@ import java.util.Random;
 public class WumpusLaberynth {
 
     private ArrayList<ArrayList<Cell>> laberynth;
-    private int[] ppos;
-    private int[] wumpuspos;
-    private int[] batpos;
+    private int[] ppos;                 //player position
+    private int[] wumpuspos;            //wumpus position
+    private int[] batpos;               //bat position
 
 
     public WumpusLaberynth() {
@@ -21,12 +21,50 @@ public class WumpusLaberynth {
         batpos = null;
     }
 
+
+    //getere amb el deep copy
     public ArrayList<ArrayList<Cell>> getLaberynth() {
-        return laberynth;
+        ArrayList<ArrayList<Cell>> copy = new ArrayList<>();
+        for (ArrayList<Cell> row : laberynth){
+            ArrayList<Cell > newRow = new ArrayList<>();
+            for (Cell cell : row){
+                if (cell instanceof NormallCell){
+                    newRow.add(new NormallCell((NormallCell) cell));
+                } else if (cell instanceof PowerUPCell) {
+                    newRow.add(new PowerUPCell((PowerUPCell) cell));
+                }else if(cell instanceof WellCell){
+                    newRow.add(new WellCell ((WellCell) cell));
+                }else newRow.add(null);
+            }
+            copy.add(newRow);
+        }
+        return copy;
     }
 
-    public void setLaberynth(ArrayList<ArrayList<Cell>> laberynth) {
-        this.laberynth = laberynth;
+    public void setLaberynth(ArrayList<ArrayList<Cell>> newlaberynth) {
+        this.laberynth = new ArrayList<>();
+        ArrayList<int[]> batpos = new ArrayList<>();
+        for (int i = 0; i < newlaberynth.size(); i++) {
+            ArrayList<Cell> newRow = new ArrayList<>();
+            for (int j = 0; j <newlaberynth.get(i).size(); j++) {
+                Cell cell = newlaberynth.get(i).get(j);
+
+                if (cell instanceof NormallCell normallCell){
+                    newRow.add(new NormallCell(normallCell);
+                        if (normallCell.getiType()== InhabitantType.WUMPUS){
+                                wumpuspos = new int[]{i,j};
+                        }
+                        if (normallCell.getiType() == InhabitantType.BAT){
+                            batpos.add(new int[]{i,j});
+                        }
+                }else if(cell instanceof PowerUPCell){
+                    newRow.add(new PowerUPCell((PowerUPCell) cell));
+                }else if(cell instanceof WellCell){
+                    newRow.add(new WellCell((WellCell) cell));
+                }else newRow.add(null);
+            }
+            this.laberynth.add(newRow);
+        }
     }
 
     public void createNewLaberynth(){
@@ -48,7 +86,8 @@ public class WumpusLaberynth {
         for (int i = 0; i < row; i++) {
             ArrayList<Cell> fila = new ArrayList<Cell>();
             for (int j = 0; j < col; j++) {
-                fila.add(new Cell(CellType.NORMAL));
+                fila.add(new cell.(CellType.NORMAL));
+
             }
             laberynth.add(fila);
         }
@@ -66,8 +105,8 @@ public class WumpusLaberynth {
             int j = rnd.nextInt(col);
 
             Cell cell = laberynth.get(i).get(j);
-            if (cell.getType() == CellType.NORMAL) {
-                cell.setType(CellType.WELL);
+            if (cell.getcType() == CellType.NORMAL) {
+                cell.setcType();
                 wellsPlaced++;
             }
         }

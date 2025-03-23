@@ -35,8 +35,14 @@ public abstract class Cell {
 
 
     //Getters CellType i Open
-    public CellType getCellType() {
+
+
+    public CellType getcType() {
         return cType;
+    }
+
+    public void setcType() {
+        this.cType = cType;
     }
 
     public boolean isOpen() {
