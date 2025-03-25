@@ -50,7 +50,7 @@ public class WumpusLaberynth {
                 Cell cell = newlaberynth.get(i).get(j);
 
                 if (cell instanceof NormallCell normallCell){
-                    newRow.add(new NormallCell(normallCell);
+                    newRow.add(new NormallCell(normallCell));
                         if (normallCell.getiType()== InhabitantType.WUMPUS){
                                 wumpuspos = new int[]{i,j};
                         }
