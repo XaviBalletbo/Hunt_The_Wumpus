@@ -225,21 +225,27 @@ public class WumpusLaberynth {
     public int[] movePlayer(MovementDirection dir) {
         int[] result = null;
 
-        if (laberynth != null && !laberynth.isEmpty() && ppos != null && ppos.length > 0) {
+        if (laberynth != null && ppos != null) {
             int newRow = ppos[0][0];
             int newCol = ppos[0][1];
 
-            switch (dir) {
-                case UP: newRow--; break;
-                case DOWN: newRow++; break;
-                case LEFT: newCol--; break;
-                case RIGHT: newCol++; break;
+            if (dir == MovementDirection.UP) {
+                newRow--;
+            } else if (dir == MovementDirection.DOWN) {
+                newRow++;
+            } else if (dir == MovementDirection.LEFT) {
+                newCol--;
+            } else if (dir == MovementDirection.RIGHT) {
+                newCol++;
             }
 
             if (checkCorrectCell(newRow, newCol)) {
                 ppos[0][0] = newRow;
-                ppos[0][1] = newCol;
-                laberynth.get(newRow).get(newCol).openCell();
+                ppos[1][1] = newCol;
+
+                Cell cell = laberynth.get(newRow).get(newCol);
+                cell.openCell();
+
                 result = new int[]{newRow, newCol};
             }
         }
@@ -324,20 +330,22 @@ public class WumpusLaberynth {
     public boolean shootArrow(ShootDirection dir) {
         boolean hit = false;
 
-        if (ppos != null && ppos.length > 0) {
+        if (ppos != null) {
             int targetRow = ppos[0][0];
             int targetCol = ppos[0][1];
 
-            switch (dir) {
-                case UP: targetRow--; break;
-                case DOWN: targetRow++; break;
-                case LEFT: targetCol--; break;
-                case RIGHT: targetCol++; break;
+            if (dir == ShootDirection.UP) {
+                targetRow--;
+            } else if (dir == ShootDirection.DOWN) {
+                targetRow++;
+            } else if (dir == ShootDirection.LEFT) {
+                targetCol--;
+            } else if (dir == ShootDirection.RIGHT) {
+                targetCol++;
             }
 
             if (checkCorrectCell(targetRow, targetCol)) {
-                if (wumpuspos != null && wumpuspos.length > 0 &&
-                        wumpuspos[0][0] == targetRow && wumpuspos[0][1] == targetCol) {
+                if (wumpuspos[0][0] == targetRow && wumpuspos[0][1] == targetCol) {
                     hit = true;
                 }
             }
