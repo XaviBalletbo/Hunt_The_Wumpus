@@ -12,7 +12,6 @@ public class WumpusLaberynth {
     private int[] wumpuspos;
     private int[] batspos;
 
-
     public WumpusLaberynth() {
         laberynth = new ArrayList<>();
         ppos = null;
