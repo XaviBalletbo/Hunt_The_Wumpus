@@ -241,7 +241,7 @@ public class WumpusLaberynth {
 
             if (checkCorrectCell(newRow, newCol)) {
                 ppos[0][0] = newRow;
-                ppos[1][1] = newCol;
+                ppos[0][1] = newCol;
 
                 Cell cell = laberynth.get(newRow).get(newCol);
                 cell.openCell();
