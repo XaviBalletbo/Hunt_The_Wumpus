@@ -142,8 +142,8 @@ public class WumpusLaberynth {
     public void createNewLaberynth() {
         Random rn = new Random();
 
-        int rows = rn.nextInt(11) + 5; // 5-15 filas
-        int cols = rn.nextInt(11) + 5; // 5-15 columnas
+        int rows = rn.nextInt(11) + 5;
+        int cols = rn.nextInt(11) + 5;
         int totalCells = rows * cols;
 
         int wellsMin = 2;
@@ -158,7 +158,6 @@ public class WumpusLaberynth {
         int batsMax = Math.max(batsMin, (int)(totalCells * 0.10));
         int batsToPlace = rn.nextInt(batsMax - batsMin + 1) + batsMin;
 
-        // Inicializar laberinto con celdas normales
         laberynth = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             ArrayList<Cell> row = new ArrayList<>();
@@ -376,13 +375,11 @@ public class WumpusLaberynth {
                 if (!validCells.isEmpty()) {
                     int[] newPos = validCells.get((int)(Math.random() * validCells.size()));
 
-                    // Limpiar posición actual del Wumpus
                     if (wumpuspos != null && wumpuspos.length > 0) {
                         NormallCell oldCell = (NormallCell) laberynth.get(wumpuspos[0][0]).get(wumpuspos[0][1]);
                         oldCell.setiType(InhabitantType.NONE);
                     }
 
-                    // Mover al Wumpus a nueva posición
                     NormallCell newCell = (NormallCell) laberynth.get(newPos[0]).get(newPos[1]);
                     newCell.setiType(InhabitantType.WUMPUS);
                     wumpuspos = new int[][]{{newPos[0], newPos[1]}};
@@ -400,7 +397,6 @@ public class WumpusLaberynth {
             return;
         }
 
-        // Primero recolectamos todas las posiciones actuales de murciélagos
         List<int[]> currentBatPositions = new ArrayList<>();
         for (int row = 0; row < laberynth.size(); row++) {
             for (int col = 0; col < laberynth.get(row).size(); col++) {
@@ -411,7 +407,6 @@ public class WumpusLaberynth {
             }
         }
 
-        // Para cada murciélago, buscamos una nueva posición válida
         for (int[] batPos : currentBatPositions) {
             List<int[]> validCells = new ArrayList<>();
 
@@ -430,15 +425,12 @@ public class WumpusLaberynth {
             if (!validCells.isEmpty()) {
                 int[] newPos = validCells.get((int)(Math.random() * validCells.size()));
 
-                // Limpiar posición actual del murciélago
                 NormallCell oldCell = (NormallCell) laberynth.get(batPos[0]).get(batPos[1]);
                 oldCell.setiType(InhabitantType.NONE);
 
-                // Mover a nueva posición
                 NormallCell newCell = (NormallCell) laberynth.get(newPos[0]).get(newPos[1]);
                 newCell.setiType(InhabitantType.BAT);
 
-                // Actualizar posición en batspos si existe
                 if (batspos != null) {
                     for (int i = 0; i < batspos.length; i += 2) {
                         if (batspos[i] == batPos[0] && batspos[i+1] == batPos[1]) {
@@ -453,7 +445,7 @@ public class WumpusLaberynth {
     }
 
     public String emitEchoes() {
-        StringBuilder echoes = new StringBuilder();
+        String echoes = "";
 
         if (laberynth != null && !laberynth.isEmpty() && ppos != null && ppos.length > 0) {
             int centerRow = ppos[0][0];
@@ -467,16 +459,16 @@ public class WumpusLaberynth {
                         String echo = laberynth.get(row).get(col).emitEcho();
                         if (echo != null && !echo.isEmpty()) {
                             if (!echoes.isEmpty()) {
-                                echoes.append(" ");
+                                echoes += " ";
                             }
-                            echoes.append(echo);
+                            echoes += echo;
                         }
                     }
                 }
             }
         }
 
-        return echoes.toString();
+        return echoes;
     }
 
     public String currentCellMessage() {
@@ -487,7 +479,7 @@ public class WumpusLaberynth {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        String sb = "";
 
         if (laberynth != null && !laberynth.isEmpty()) {
             for (int i = 0; i < laberynth.size(); i++) {
@@ -495,24 +487,24 @@ public class WumpusLaberynth {
                     Cell cell = laberynth.get(i).get(j);
 
                     if (ppos != null && ppos.length > 0 && ppos[0][0] == i && ppos[0][1] == j) {
-                        sb.append("P");
+                        sb += "P";
                     } else if (!cell.isOpen()) {
-                        sb.append("#");
+                        sb += "#";
                     } else if (cell.getcType() == CellType.WELL) {
-                        sb.append("O");
-                    } else if (cell instanceof NormallCell && ((NormallCell)cell).getiType() == InhabitantType.WUMPUS) {
-                        sb.append("W");
-                    } else if (cell instanceof NormallCell && ((NormallCell)cell).getiType() == InhabitantType.BAT) {
-                        sb.append("*");
+                        sb += "O";
+                    } else if (cell instanceof NormallCell && ((NormallCell) cell).getiType() == InhabitantType.WUMPUS) {
+                        sb += "W";
+                    } else if (cell instanceof NormallCell && ((NormallCell) cell).getiType() == InhabitantType.BAT) {
+                        sb += "*";
                     } else {
-                        sb.append(" ");
+                        sb += " ";
                     }
                 }
-                sb.append("\n");
+                sb += "\n";
             }
         }
 
-        return sb.toString();
+        return sb;
     }
 
     private boolean checkCorrectCell(int row, int col) {
