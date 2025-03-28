@@ -115,62 +115,65 @@ public class WumpusController {
     }
 
 
-  /*  public boolean saveLaberynth(String filename) {
-        // Verificar parámetros de entrada
+    public boolean saveLaberynth(String filename) {
+        boolean file =false;
         if (filename == null || filename.isEmpty() || laberynth == null) {
-            return false;
+            file = false;
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            // 1. Guardar dimensiones del laberinto
-            int rows = laberynth.getLaberynth().size();
-            int cols = rows > 0 ? laberynth.getLaberynth().get(0).size() : 0;
-            writer.write(rows + " " + cols + "\n");
+            // 1. Escribir dimensiones del laberinto
+            ArrayList<ArrayList<Cell>> cells = laberynth.getLaberynth();
+            int rows = cells.size();
+            int cols = rows > 0 ? cells.get(0).size() : 0;
+            writer.write(rows + " " + cols);
+            writer.newLine();
 
-            // 2. Guardar cada celda del laberinto
+            // 2. Escribir cada celda del laberinto
+            int wumpusRow = -1, wumpusCol = -1;
+            String batsLine = "";
+
             for (int i = 0; i < rows; i++) {
-                String rowData = "";
+                String line = "";
                 for (int j = 0; j < cols; j++) {
-                    Cell cell = laberynth.getLaberynth().get(i).get(j);
-                    if (cell instanceof WellCell) {
-                        rowData += "W ";
-                    } else if (cell instanceof PowerUPCell) {
-                        rowData += "P ";
-                    } else if (cell instanceof NormallCell) {
+                    Cell cell = cells.get(i).get(j);
+                    if (cell instanceof NormallCell) {
                         NormallCell normalCell = (NormallCell) cell;
                         if (normalCell.getiType() == InhabitantType.WUMPUS) {
-                            rowData += "W ";
+                            line += "W ";
+                            wumpusRow = i;
+                            wumpusCol = j;
                         } else if (normalCell.getiType() == InhabitantType.BAT) {
-                            rowData += "B ";
+                            line += "N "; // Los murciélagos no cambian el tipo de celda
+                            batsLine += (i * cols + j) + " ";
                         } else {
-                            rowData += "N ";
+                            line += "N ";
                         }
+                    } else if (cell instanceof PowerUPCell) {
+                        line += "P ";
+                    } else if (cell instanceof WellCell) {
+                        line += "W ";
                     }
                 }
-                writer.write(rowData.trim() + "\n");
+                writer.write(line.trim());
+                writer.newLine();
             }
 
-            // 3. Guardar posición del jugador
-          /*  if (ppos != null && ppos.length > 0 && ppos[0] != null) {
-                writer.write(ppos[0][0] + " " + ppos[0][1] + "\n");
-            } else {
-                writer.write("-1 -1\n");
-            }*/
-    /*
-            // 4. Guardar estado del juego
-            writer.write(gameEnded + "\n");
-            writer.write(won + "\n");
+            // 3. Escribir posición del Wumpus (detectada durante el escaneo)
+            writer.write(wumpusRow + " " + wumpusCol);
+            writer.newLine();
 
-            // 5. Guardar mensajes y ecos
-            writer.write((traverseMessage != null ? traverseMessage : "") + "\n");
-            writer.write((echoes != null ? echoes : "") + "\n");
+            // 4. Escribir posiciones de los murciélagos (en formato lineal)
+            writer.write(batsLine.trim());
+            writer.newLine();
 
-            return true;
+            file = true;
 
         } catch (IOException e) {
-            return false;
+            file = false;
         }
-    }*/
+        return file;
+    }
 
     public boolean startGame() {
         boolean rtrn;
