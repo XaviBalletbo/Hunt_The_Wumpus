@@ -107,7 +107,7 @@ public class WumpusController {
     }
 
 
-    public boolean saveLaberynth(String filename) {
+  /*  public boolean saveLaberynth(String filename) {
         // Verificar parámetros de entrada
         if (filename == null || filename.isEmpty() || laberynth == null) {
             return false;
@@ -148,7 +148,7 @@ public class WumpusController {
             } else {
                 writer.write("-1 -1\n");
             }*/
-
+    /*
             // 4. Guardar estado del juego
             writer.write(gameEnded + "\n");
             writer.write(won + "\n");
@@ -162,7 +162,7 @@ public class WumpusController {
         } catch (IOException e) {
             return false;
         }
-    }
+    }*/
 
 }
 
