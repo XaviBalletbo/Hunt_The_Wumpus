@@ -393,50 +393,48 @@ public class WumpusLaberynth {
     }
 
     public void moveBats() {
-        if (laberynth == null || laberynth.isEmpty() || ppos == null || ppos.length == 0) {
-            return;
-        }
-
-        List<int[]> currentBatPositions = new ArrayList<>();
-        for (int row = 0; row < laberynth.size(); row++) {
-            for (int col = 0; col < laberynth.get(row).size(); col++) {
-                Cell cell = laberynth.get(row).get(col);
-                if (cell instanceof NormallCell && ((NormallCell)cell).getiType() == InhabitantType.BAT) {
-                    currentBatPositions.add(new int[]{row, col});
-                }
-            }
-        }
-
-        for (int[] batPos : currentBatPositions) {
-            List<int[]> validCells = new ArrayList<>();
-
+        if (laberynth != null || !laberynth.isEmpty() || ppos != null) {
+            List<int[]> currentBatPositions = new ArrayList<>();
             for (int row = 0; row < laberynth.size(); row++) {
                 for (int col = 0; col < laberynth.get(row).size(); col++) {
                     Cell cell = laberynth.get(row).get(col);
-                    if (cell.getcType() == CellType.NORMAL &&
-                            ((NormallCell)cell).getiType() == InhabitantType.NONE &&
-                            !(row == ppos[0][0] && col == ppos[0][1]) &&
-                            !(row == batPos[0] && col == batPos[1])) {
-                        validCells.add(new int[]{row, col});
+                    if (cell instanceof NormallCell && ((NormallCell)cell).getiType() == InhabitantType.BAT) {
+                        currentBatPositions.add(new int[]{row, col});
                     }
                 }
             }
 
-            if (!validCells.isEmpty()) {
-                int[] newPos = validCells.get((int)(Math.random() * validCells.size()));
+            for (int[] batPos : currentBatPositions) {
+                List<int[]> validCells = new ArrayList<>();
 
-                NormallCell oldCell = (NormallCell) laberynth.get(batPos[0]).get(batPos[1]);
-                oldCell.setiType(InhabitantType.NONE);
+                for (int row = 0; row < laberynth.size(); row++) {
+                    for (int col = 0; col < laberynth.get(row).size(); col++) {
+                        Cell cell = laberynth.get(row).get(col);
+                        if (cell.getcType() == CellType.NORMAL &&
+                                ((NormallCell)cell).getiType() == InhabitantType.NONE &&
+                                !(row == ppos[0][0] && col == ppos[0][1]) &&
+                                !(row == batPos[0] && col == batPos[1])) {
+                            validCells.add(new int[]{row, col});
+                        }
+                    }
+                }
 
-                NormallCell newCell = (NormallCell) laberynth.get(newPos[0]).get(newPos[1]);
-                newCell.setiType(InhabitantType.BAT);
+                if (!validCells.isEmpty()) {
+                    int[] newPos = validCells.get((int)(Math.random() * validCells.size()));
 
-                if (batspos != null) {
-                    for (int i = 0; i < batspos.length; i += 2) {
-                        if (batspos[i] == batPos[0] && batspos[i+1] == batPos[1]) {
-                            batspos[i] = newPos[0];
-                            batspos[i+1] = newPos[1];
-                            break;
+                    NormallCell oldCell = (NormallCell) laberynth.get(batPos[0]).get(batPos[1]);
+                    oldCell.setiType(InhabitantType.NONE);
+
+                    NormallCell newCell = (NormallCell) laberynth.get(newPos[0]).get(newPos[1]);
+                    newCell.setiType(InhabitantType.BAT);
+
+                    if (batspos != null) {
+                        for (int i = 0; i < batspos.length; i += 2) {
+                            if (batspos[i] == batPos[0] && batspos[i+1] == batPos[1]) {
+                                batspos[i] = newPos[0];
+                                batspos[i+1] = newPos[1];
+                                break;
+                            }
                         }
                     }
                 }
