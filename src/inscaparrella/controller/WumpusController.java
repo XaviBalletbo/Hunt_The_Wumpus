@@ -4,6 +4,8 @@ import inscaparrella.model.WumpusLaberynth;
 import inscaparrella.model.Player;
 import inscaparrella.model.*;
 import inscaparrella.utils.InhabitantType;
+import inscaparrella.utils.MovementDirection;
+import inscaparrella.utils.ShootDirection;
 
 
 import java.io.*;
@@ -163,6 +165,31 @@ public class WumpusController {
             return false;
         }
     }*/
+
+    public boolean startGame() {
+        boolean rtrn;
+        int[] startCell = laberynth.getInitialCell();
+
+        if (startCell == null)
+            rtrn = false;
+
+        gameEnded = false;
+        won = false;
+
+        player.setStartingCell(startCell[0], startCell[1]);
+
+        rtrn = true;
+
+        return rtrn;
+    }
+
+    public void movePlayer(MovementDirection movementDirection) {
+
+    }
+
+    public void huntTheWumpus(ShootDirection shootDirection) {
+
+    }
 
 }
 
