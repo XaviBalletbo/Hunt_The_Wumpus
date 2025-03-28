@@ -3,10 +3,7 @@ package inscaparrella.controller;
 import inscaparrella.model.WumpusLaberynth;
 import inscaparrella.model.Player;
 import inscaparrella.model.*;
-import inscaparrella.utils.CellType;
-import inscaparrella.utils.InhabitantType;
-import inscaparrella.utils.MovementDirection;
-import inscaparrella.utils.ShootDirection;
+import inscaparrella.utils.*;
 
 
 import java.io.*;
@@ -208,7 +205,7 @@ public class WumpusController {
         return traverseMessage;
     }
 
-    public String getLastEcho(){
+    public String getLastEchoes(){
         return echoes;
     }
 
@@ -236,8 +233,95 @@ public class WumpusController {
         return jocGuanyat;
     }
 
+    public String toString(){
+        String resultat = "";
+        if (laberynth != null){
+            resultat += laberynth.toString();
+        }else resultat += "Laberint no carregat \n";
+
+        if (player != null){
+            resultat += "\n" +player.toString();
+        }else resultat += "\n Jugado no inicialitzat";
+
+        resultat += "\n\n Estat del joc: ";
+
+        if (gameEnded){
+            if (won == true){
+                resultat += "GUANYAT";
+            }else resultat += "PERDUT";
+        }else resultat += "EN CURS";
+
+        if (traverseMessage != null && !traverseMessage.isEmpty()){
+            resultat += "\n\n Últim missatge: " +getLastTraverseMessage();
+        }
+        if (echoes != null && !echoes.isEmpty()){
+            resultat += "\n Ecos: " +echoes;
+        }
+        return resultat;
+    }
+
     private void traverseCell(){
 
+        String msg = "";
+
+        if (laberynth!= null && player != null && !gameEnded){
+            String playerPosStr = player.toString();
+            String  [] parts = playerPosStr.split("posició: " )[1].split(" ");
+            int row = Integer.parseInt(parts[0].trim());
+            int col = Integer.parseInt(parts[1].trim());
+
+            //obtenir cela actual
+
+            Cell currentCell = laberynth.getLaberynth().get(row).get(col);
+            currentCell.openCell();
+
+            //comprobar perills
+
+            if (currentCell.isDangerus()){
+                if (currentCell.getcType()== CellType.NORMAL){
+                    NormallCell normallCell = (NormallCell) currentCell;
+                        if (normallCell.getiType()== InhabitantType.WUMPUS){
+                            gameEnded = true;
+                            msg = currentCell.toString() + "El wumpus ha atacat i malferit al jugador!";
+                        }
+                 //celes de tipus Well
+                else if (currentCell.getcType() == CellType.WELL) {
+                    if (player.getPowerUpQuantity(PowerUp.JUMPER_BOOTS)> 0 && player.usePower(PowerUp.JUMPER_BOOTS)){
+                        msg = currentCell.toString() + "El jugador ha estat a punt de caure en un pou, pero, per sort, portaba les Jumpper.BOOTS";
+                        gameEnded = false;
+                    }else {
+                    gameEnded = true;
+                    msg = currentCell.toString() + "El jugador ha caigut en un pou i ha quedat malferit!";
+                    }
+                }
+                //celes normals amb algun event
+                } else if (currentCell.getcType()== CellType.NORMAL) {
+                    NormallCell normallCell = (NormallCell) currentCell;
+                        if (normallCell.getiType() == InhabitantType.BAT){
+                            msg = currentCell.toString() + "Un ratpenat s'enduu el jugador!";
+                            laberynth.batKidnapping();
+
+                            traverseCell();
+                        }
+                   //celes de poder
+                } else if (currentCell.getcType() == CellType.POWERUP) {
+                    PowerUPCell powerUPCell = (PowerUPCell) currentCell;
+                    PowerUp power = powerUPCell.consumePowerUp();
+                    if (power != PowerUp.NONE){
+                        player.addPower(power);
+                        msg = currentCell.toString() + "El jugador ha trobat una unitat del poder " +power.name();
+                    }
+                }
+
+                //celes normals sense cap tipus d'events
+                else {
+                    msg = currentCell.toString();
+                }
+            }
+        }
+        traverseMessage = msg;
     }
+
+
 
 }
