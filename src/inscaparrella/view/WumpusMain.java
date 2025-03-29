@@ -82,7 +82,7 @@ public class WumpusMain {
         contr = new WumpusController();
 
         // 2. Cargar el laberinto por defecto
-        String defaultFile = "files/wumpus_default.txt";
+        String defaultFile = "files/wumpus1.txt";
         if (!contr.loadLabyrinth(defaultFile)) {
             System.out.println("ERROR: No s'ha trobat el fitxer per defecte " + defaultFile);
         } else {
