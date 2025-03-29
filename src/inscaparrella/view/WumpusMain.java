@@ -4,6 +4,7 @@ import inscaparrella.controller.WumpusController;
 import inscaparrella.utils.*;
 import inscaparrella.utils.PowerUp;
 
+import java.io.File;
 import java.util.Scanner;
 
 /*
@@ -20,6 +21,11 @@ public class WumpusMain {
         //variables
         boolean menu = true;
         int opt;
+
+        File directory = new File("files");
+        if (!directory.exists()) {
+            directory.mkdir(); // Crear el directorio si no existe
+        }
 
         do {
             System.out.println("""
@@ -64,17 +70,37 @@ public class WumpusMain {
             }
     }
 
-    public static void createNewGame(){
+    public static void createNewGame() {
         System.out.println("Introdueix el nom del fitxer per guardar la partida (per defecte files/wumpus1.txt): ");
         String filename = keyboard.nextLine();
 
+        if (filename.isEmpty()) {
+            filename = "files/wumpus1.txt";
+        }
+
+        // 1. Crear nuevo controlador
         contr = new WumpusController();
-        contr.loadLabyrinth(filename);
 
-        if (contr.startGame()){
-            playGame();
-        }else System.out.println("No s'ha pogut iniciar el joc: ");
+        // 2. Cargar el laberinto por defecto
+        String defaultFile = "files/wumpus_default.txt";
+        if (!contr.loadLabyrinth(defaultFile)) {
+            System.out.println("ERROR: No s'ha trobat el fitxer per defecte " + defaultFile);
+        } else {
+            // 3. Guardar con el nombre especificado por el usuario
+            if (contr.saveLaberynth(filename)) {
+                System.out.println("Partida guardada correctament a: " + filename);
+            } else {
+                System.out.println("ERROR: No s'ha pogut guardar la partida a " + filename);
+                System.out.println("Assegura't que el directori 'files' existeix i tens permisos");
+            }
 
+            // 4. Iniciar el juego si todo ha ido bien
+            if (contr.startGame()) {
+                playGame();
+            } else {
+                System.out.println("No s'ha pogut iniciar el joc: " + contr.getLastTraverseMessage());
+            }
+        }
     }
 
     private static void playGame() {

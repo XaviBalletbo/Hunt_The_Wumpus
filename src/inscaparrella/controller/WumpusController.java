@@ -113,7 +113,7 @@ public class WumpusController {
 
 
     public boolean saveLaberynth(String filename) {
-        boolean file =false;
+        boolean file = false;
         if (filename == null || filename.isEmpty() || laberynth == null) {
             file = false;
         }
@@ -152,8 +152,12 @@ public class WumpusController {
                         line += "W ";
                     }
                 }
-                writer.write(line.trim());
-                writer.newLine();
+
+                // Asegurarse de que la línea no sea nula ni vacía antes de escribirla
+                if (line != null && !line.trim().isEmpty()) {
+                    writer.write(line.trim());
+                    writer.newLine();
+                }
             }
 
             // 3. Escribir posición del Wumpus (detectada durante el escaneo)
@@ -161,19 +165,22 @@ public class WumpusController {
             writer.newLine();
 
             // 4. Escribir posiciones de los murciélagos (en formato lineal)
-            writer.write(batsLine.trim());
-            writer.newLine();
+            if (!batsLine.trim().isEmpty()) {
+                writer.write(batsLine.trim());
+                writer.newLine();
+            }
 
             file = true;
 
         } catch (IOException e) {
             file = false;
+            e.printStackTrace(); // Puedes agregar esto para saber si ocurre un error
         }
         return file;
     }
 
     public boolean startGame() {
-        boolean rtrn;
+        boolean rtrn = true;
         int[] startCell = laberynth.getInitialCell();
 
         if (startCell == null)
@@ -184,22 +191,36 @@ public class WumpusController {
 
         player.setStartingCell(startCell[0], startCell[1]);
 
-        rtrn = true;
-
         return rtrn;
     }
 
     public void movePlayer(MovementDirection movementDirection) {
-        if (gameEnded != true){
-            laberynth.movePlayer(movementDirection);
+        if (!gameEnded) {
+            if (laberynth.movePlayer(movementDirection) != null) {
+                traverseCell(); // Aplica los efectos de la nueva celda
+                if (!gameEnded) {
+                    laberynth.moveBats(); // Mueve los murciélagos
+                    echoes = laberynth.emitEchoes(); // Usamos emitEchoes() en lugar de updateEchoes()
+                }
+            }
         }
     }
 
     public void huntTheWumpus(ShootDirection shootDirection) {
-        if (gameEnded != true){
-            laberynth.shootArrow(shootDirection);
+        if (!gameEnded && player.getPowerUpQuantity(PowerUp.ARROW) > 0) {
+            player.usePower(PowerUp.ARROW); // Usa una flecha
+            if (laberynth.shootArrow(shootDirection)) {
+                won = true;
+                gameEnded = true;
+                traverseMessage = "Has derrotat al Wumpus!";
+            } else {
+                traverseMessage = "Has disparat una fletxa, però no has encertat!";
+            }
         }
     }
+
+
+
 
     public String getLastTraverseMessage(){
         return traverseMessage;
@@ -244,68 +265,95 @@ public class WumpusController {
         return resultat;
     }
 
-    private void traverseCell(){
-
+    private void traverseCell() {
         String msg = "";
+        boolean rtrn = false;
 
-        if (laberynth!= null && player != null && !gameEnded){
-            String playerPosStr = player.toString();
-            String  [] parts = playerPosStr.split("posició: " )[1].split(" ");
-            int row = Integer.parseInt(parts[0].trim());
-            int col = Integer.parseInt(parts[1].trim());
+        if (!rtrn && (laberynth == null || player == null || gameEnded)) {
+            msg = "";
+            rtrn = true;
+        }
 
-            //obtenir cela actual
-
-            Cell currentCell = laberynth.getLaberynth().get(row).get(col);
-            currentCell.openCell();
-
-            //comprobar perills
-
-            if (currentCell.isDangerus()){
-                if (currentCell.getcType()== CellType.NORMAL){
-                    NormallCell normallCell = (NormallCell) currentCell;
-                        if (normallCell.getiType()== InhabitantType.WUMPUS){
-                            gameEnded = true;
-                            msg = currentCell.toString() + "El wumpus ha atacat i malferit al jugador!";
-                        }
-                 //celes de tipus Well
-                else if (currentCell.getcType() == CellType.WELL) {
-                    if (player.getPowerUpQuantity(PowerUp.JUMPER_BOOTS)> 0 && player.usePower(PowerUp.JUMPER_BOOTS)){
-                        msg = currentCell.toString() + "El jugador ha estat a punt de caure en un pou, pero, per sort, portaba les Jumpper.BOOTS";
-                        gameEnded = false;
-                    }else {
-                    gameEnded = true;
-                    msg = currentCell.toString() + "El jugador ha caigut en un pou i ha quedat malferit!";
-                    }
+        // Obtener posición actual del jugador
+        int[] playerPos = null;
+        if (!rtrn) {
+            try {
+                playerPos = laberynth.getPlayerPosition();
+                if (playerPos == null || playerPos.length < 2) {
+                    msg = "Error: No se pudo determinar la posición del jugador";
+                    rtrn = true;
                 }
-                //celes normals amb algun event
-                } else if (currentCell.getcType()== CellType.NORMAL) {
-                    NormallCell normallCell = (NormallCell) currentCell;
-                        if (normallCell.getiType() == InhabitantType.BAT){
-                            msg = currentCell.toString() + "Un ratpenat s'enduu el jugador!";
-                            laberynth.batKidnapping();
-
-                            traverseCell();
-                        }
-                   //celes de poder
-                } else if (currentCell.getcType() == CellType.POWERUP) {
-                    PowerUPCell powerUPCell = (PowerUPCell) currentCell;
-                    PowerUp power = powerUPCell.consumePowerUp();
-                    if (power != PowerUp.NONE){
-                        player.addPower(power);
-                        msg = currentCell.toString() + "El jugador ha trobat una unitat del poder " +power.name();
-                    }
-                }
-
-                //celes normals sense cap tipus d'events
-                else {
-                    msg = currentCell.toString();
-                }
+            } catch (Exception e) {
+                msg = "Error al obtener posición del jugador: " + e.getMessage();
+                rtrn = true;
             }
         }
+
+        // Verificar que la celda existe
+        Cell currentCell = null;
+        if (!rtrn) {
+            int row = playerPos[0];
+            int col = playerPos[1];
+
+            if (row < 0 || col < 0 || row >= laberynth.getLaberynth().size() ||
+                    col >= laberynth.getLaberynth().get(0).size()) {
+                msg = "Posición del jugador fuera de límites";
+                rtrn = true;
+            } else {
+                currentCell = laberynth.getLaberynth().get(row).get(col);
+                currentCell.openCell();
+            }
+        }
+
+        // Procesar tipo de celda
+        if (!rtrn && currentCell != null) {
+            switch (currentCell.getcType()) {
+                case NORMAL:
+                    NormallCell normallCell = (NormallCell) currentCell;
+                    switch (normallCell.getiType()) {
+                        case WUMPUS:
+                            gameEnded = true;
+                            msg = currentCell.toString() + "El wumpus ha atacat i malferit al jugador!";
+                            break;
+                        case BAT:
+                            msg = currentCell.toString() + "Un ratpenat s'enduu el jugador!";
+                            laberynth.batKidnapping();
+                            traverseCell(); // Repetir para la nueva celda
+                            break;
+                        default:
+                            msg = currentCell.toString();
+                            break;
+                    }
+                    break;
+
+                case WELL:
+                    if (player.getPowerUpQuantity(PowerUp.JUMPER_BOOTS) > 0 &&
+                            player.usePower(PowerUp.JUMPER_BOOTS)) {
+                        msg = currentCell.toString() + "El jugador ha estat a punt de caure en un pou, pero, per sort, portaba les Jumpper.BOOTS";
+                    } else {
+                        gameEnded = true;
+                        msg = currentCell.toString() + "El jugador ha caigut en un pou i ha quedat malferit!";
+                    }
+                    break;
+
+                case POWERUP:
+                    PowerUPCell powerUPCell = (PowerUPCell) currentCell;
+                    PowerUp power = powerUPCell.consumePowerUp();
+                    if (power != PowerUp.NONE) {
+                        player.addPower(power);
+                        msg = currentCell.toString() + "El jugador ha trobat una unitat del poder " + power.name();
+                    } else {
+                        msg = currentCell.toString();
+                    }
+                    break;
+
+                default:
+                    msg = currentCell.toString();
+                    break;
+            }
+        }
+
         traverseMessage = msg;
     }
-
-
 
 }

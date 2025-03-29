@@ -329,7 +329,7 @@ public class WumpusLaberynth {
     public boolean shootArrow(ShootDirection dir) {
         boolean hit = false;
 
-        if (ppos != null) {
+        if (ppos != null && wumpuspos != null && wumpuspos.length > 0) {
             int targetRow = ppos[0][0];
             int targetCol = ppos[0][1];
 
@@ -344,14 +344,13 @@ public class WumpusLaberynth {
             }
 
             if (checkCorrectCell(targetRow, targetCol)) {
-                if (wumpuspos[0][0] == targetRow && wumpuspos[0][1] == targetCol) {
-                    hit = true;
-                }
+                hit = (wumpuspos[0][0] == targetRow && wumpuspos[0][1] == targetCol);
             }
         }
 
         return hit;
     }
+
 
     public boolean startleWumpus() {
         boolean result = false;
@@ -393,7 +392,7 @@ public class WumpusLaberynth {
     }
 
     public void moveBats() {
-        if (laberynth != null || !laberynth.isEmpty() || ppos != null) {
+        if (laberynth != null && !laberynth.isEmpty() && ppos != null) {
             List<int[]> currentBatPositions = new ArrayList<>();
             for (int row = 0; row < laberynth.size(); row++) {
                 for (int col = 0; col < laberynth.get(row).size(); col++) {
@@ -508,4 +507,12 @@ public class WumpusLaberynth {
     private boolean checkCorrectCell(int row, int col) {
         return row >= 0 && col >= 0 && row < laberynth.size() && col < laberynth.get(0).size();
     }
+
+    public int[] getPlayerPosition() {
+        if (ppos == null || ppos.length == 0 || ppos[0] == null || ppos[0].length < 2) {
+            return null;
+        }
+        return new int[]{ppos[0][0], ppos[0][1]};
+    }
 }
+
