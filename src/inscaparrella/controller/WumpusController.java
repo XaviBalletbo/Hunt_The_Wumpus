@@ -210,27 +210,11 @@ public class WumpusController {
     }
 
     public boolean isGameEnded(){
-        boolean jocAcabat = false;
-
-        if (gameEnded == true) {
-            jocAcabat = true;
-        } else {
-            jocAcabat = false;
-        }
-
-        return jocAcabat;
+        return gameEnded;
     }
 
     public boolean isGameWon(){
-        boolean jocGuanyat = false;
-
-        if (won == true){
-            jocGuanyat = true;
-        } else {
-            jocGuanyat = false;
-        }
-
-        return jocGuanyat;
+        return won;
     }
 
     public String toString(){
