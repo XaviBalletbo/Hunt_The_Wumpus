@@ -11,12 +11,12 @@ import java.util.ArrayList;
 
 public class WumpusController {
 
-    WumpusLaberynth laberynth;
-    Player player;
-    String traverseMessage;
-    String echoes;
-    boolean gameEnded;
-    boolean won;
+    private WumpusLaberynth laberynth;
+    private Player player;
+    private String traverseMessage;
+    private  String echoes;
+    private boolean gameEnded;
+    private boolean won;
 
     public WumpusController() {
         this.laberynth = new WumpusLaberynth();
